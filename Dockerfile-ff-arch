@@ -1,0 +1,15 @@
+FROM archlinux
+
+RUN pacman -Syyu --noconfirm ca-certificates firefox && \
+    pacman -Scc --noconfirm && \
+    rm -rf /var/cache/pacman/pkg/
+
+WORKDIR /home
+ADD utils.sh .
+RUN source /home/utils.sh && \
+    create_user app && \
+    rm /home/utils.sh && \
+    chown app:app /dev/stdout /dev/stderr
+
+USER app
+ENTRYPOINT ["firefox", "--no-remote", "--setDefaultBrowser"]

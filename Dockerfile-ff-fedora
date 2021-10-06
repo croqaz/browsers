@@ -1,0 +1,15 @@
+FROM fedora
+
+RUN dnf -y update && \
+    dnf -y install ca-certificates firefox && \
+    dnf clean all
+
+WORKDIR /home
+ADD utils.sh .
+RUN source /home/utils.sh && \
+    create_user app && \
+    rm /home/utils.sh && \
+    chown app:app /dev/stdout /dev/stderr
+
+USER app
+ENTRYPOINT ["firefox", "--no-remote", "--setDefaultBrowser"]
