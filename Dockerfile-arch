@@ -1,8 +1,8 @@
-FROM ubuntu
+FROM archlinux
 
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends ca-certificates firefox && \
-    rm -rf /var/lib/apt/lists
+RUN pacman -Syy --noconfirm ca-certificates firefox && \
+    pacman -Scc --noconfirm && \
+    rm -rf /var/cache/pacman/pkg/
 
 RUN groupadd --gid 1000 app && \
     useradd --no-log-init --system --uid 1000 -g 1000 -G users --home-dir /home --shell /bin/bash app && \
