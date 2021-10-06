@@ -1,0 +1,14 @@
+FROM ubuntu:21.10
+
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends ca-certificates firefox && \
+    rm -rf /var/lib/apt/lists
+
+RUN groupadd --gid 1000 app && \
+    useradd --no-log-init --system --uid 1000 -g 1000 -G users --home-dir /home --shell /bin/bash app && \
+    usermod -a -G audio app && \
+    usermod -a -G video app
+
+WORKDIR /home
+RUN chown -R app:app /home /dev/stdout /dev/stderr
+USER app
