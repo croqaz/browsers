@@ -7,6 +7,7 @@ create_user() {
         name="$1"
     fi
     groupadd --gid 1000 $name
-    useradd --no-log-init --system -u 1000 -g 1000 -G -G users,audio,video --home-dir /home --shell /bin/bash $name
+    useradd --no-log-init --system -u 1000 -g 1000 -G users,audio,video --home-dir /home -s /bin/bash $name
+    passwd -d $name
     chown -R $name:$name /home
 }

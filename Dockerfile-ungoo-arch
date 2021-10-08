@@ -1,0 +1,51 @@
+FROM archlinux
+
+RUN echo '[multilib]' >> /etc/pacman.conf && \
+    echo 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf && \
+    pacman --noconfirm -Syyu && \
+    pacman --noconfirm -S base-devel git && \
+    useradd --no-log-init --system -G users --home-dir /home -s /bin/bash aur && \
+    passwd -d aur && \
+    echo 'aur ALL=(ALL) ALL' > /etc/sudoers.d/aur && \
+    mkdir -p /home/.gnupg && \
+    echo 'standard-resolver' > /home/.gnupg/dirmngr.conf && \
+    chown -R aur:users /home && \
+    mkdir /build && \
+    chown -R aur:users /build && \
+    cd /build && \
+    sudo -u aur git clone --depth 1 https://aur.archlinux.org/yay.git && \
+    cd yay && \
+    sudo -u aur makepkg --noconfirm -si && \
+    sudo -u aur yay --afterclean --removemake --save && \
+    cd /home && \
+    pacman -Qtdq | xargs -r pacman --noconfirm -Rcns && \
+    rm -rf /home/.cache && \
+    rm -rf /build
+
+# Building Chromium will take absolutely freakin FOREVER
+RUN pacman -Sy --noconfirm ca-certificates && \
+    sudo -u aur yay --noconfirm -Sy ungoogled-chromium && \
+    sudo -u aur yay --noconfirm -Scc && \
+    rm -rf /var/cache/pacman/pkg/
+
+WORKDIR /home
+RUN useradd --no-log-init --system -U -G aur,users,audio,video --home-dir /home -s /bin/bash app && \
+    chown -R app:users /home /dev/stdout /dev/stderr
+
+# https://developer.chrome.com/blog/browser-flags
+# https://wiki.archlinux.org/title/Chromium
+RUN mkdir /home/.config && \
+    echo '--disable-breakpad'  > /home/.config/chromium-flags.conf && \
+    echo '--disable-bundled-ppapi-flash' >> /home/.config/chromium-flags.conf && \
+    echo '--disable-crash-reporter' >> /home/.config/chromium-flags.conf && \
+    echo '--disable-demo-mode' >> /home/.config/chromium-flags.conf && \
+    echo '--disable-dev-shm-usage' >> /home/.config/chromium-flags.conf && \
+    echo '--disable-notifications' >> /home/.config/chromium-flags.conf && \
+    echo '--disable-speech-api' >> /home/.config/chromium-flags.conf && \
+    echo '--enable-zero-copy' >> /home/.config/chromium-flags.conf && \
+    echo '--ignore-gpu-blocklist' >> /home/.config/chromium-flags.conf && \
+    echo '--process-per-site' >> /home/.config/chromium-flags.conf && \
+    echo '--start-maximized' >> /home/.config/chromium-flags.conf
+
+USER app
+ENTRYPOINT ["chromium"]

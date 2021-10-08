@@ -1,0 +1,28 @@
+FROM archlinux
+
+RUN pacman -Syyu --noconfirm pipewire chromium && \
+    pacman -Scc --noconfirm && \
+    rm -rf /var/cache/pacman/pkg/
+
+WORKDIR /home
+ADD utils.sh .
+RUN source /home/utils.sh && \
+    create_user app && \
+    rm /home/utils.sh && \
+    chown app:app /dev/stdout /dev/stderr
+
+USER app
+# https://developer.chrome.com/blog/browser-flags
+# https://wiki.archlinux.org/title/Chromium
+ENTRYPOINT ["chromium", \
+            "--disable-breakpad", \
+            "--disable-bundled-ppapi-flash", \
+            "--disable-crash-reporter", \
+            "--disable-demo-mode", \
+            "--disable-dev-shm-usage", \
+            "--disable-notifications", \
+            "--disable-speech-api", \
+            "--enable-zero-copy", \
+            "--ignore-gpu-blocklist", \
+            "--process-per-site", \
+            "--start-maximized"]

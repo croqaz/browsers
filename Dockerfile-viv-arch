@@ -1,6 +1,6 @@
 FROM archlinux
 
-RUN pacman -Syyu --noconfirm ca-certificates firefox && \
+RUN pacman -Syyu --noconfirm ca-certificates vivaldi vivaldi-ffmpeg-codecs && \
     pacman -Scc --noconfirm && \
     rm -rf /var/cache/pacman/pkg/
 
@@ -8,5 +8,5 @@ WORKDIR /home
 RUN useradd --no-log-init --system -U -G users,audio,video --home-dir /home -s /bin/bash app && \
     chown -R app:users /home /dev/stdout /dev/stderr
 
-USER app
-ENTRYPOINT ["firefox", "--no-remote", "--setDefaultBrowser"]
+#USER app
+#ENTRYPOINT ["vivaldi-stable"]
