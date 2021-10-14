@@ -1,6 +1,6 @@
 FROM archlinux
 
-RUN pacman -Syyu --noconfirm ca-certificates firefox && \
+RUN pacman -Syyu --noconfirm ca-certificates ttf-joypixels firefox && \
     pacman -Scc --noconfirm && \
     rm -rf /var/cache/pacman/pkg/
 

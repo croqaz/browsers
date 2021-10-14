@@ -22,7 +22,7 @@ RUN echo '[multilib]' >> /etc/pacman.conf && \
     rm -rf /home/.cache && \
     rm -rf /build
 
-RUN pacman -Sy --noconfirm ca-certificates && \
+RUN pacman -Sy --noconfirm ca-certificates ttf-joypixels && \
     sudo -u aur yay --noconfirm -Sy brave-beta-bin && \
     sudo -u aur yay --noconfirm -Scc && \
     rm -rf /var/cache/pacman/pkg/

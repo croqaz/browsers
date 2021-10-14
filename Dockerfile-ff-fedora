@@ -5,11 +5,8 @@ RUN dnf -y update && \
     dnf clean all
 
 WORKDIR /home
-ADD utils.sh .
-RUN source /home/utils.sh && \
-    create_user app && \
-    rm /home/utils.sh && \
-    chown app:app /dev/stdout /dev/stderr
+RUN useradd --no-log-init --system -U -G users,audio,video --home-dir /home -s /bin/bash app && \
+    chown -R app:users /home /dev/stdout /dev/stderr
 
 USER app
 ENTRYPOINT ["firefox", "--no-remote", "--setDefaultBrowser"]

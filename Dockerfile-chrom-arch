@@ -5,11 +5,8 @@ RUN pacman -Syyu --noconfirm pipewire chromium && \
     rm -rf /var/cache/pacman/pkg/
 
 WORKDIR /home
-ADD utils.sh .
-RUN source /home/utils.sh && \
-    create_user app && \
-    rm /home/utils.sh && \
-    chown app:app /dev/stdout /dev/stderr
+RUN useradd --no-log-init --system -U -G users,audio,video --home-dir /home -s /bin/bash app && \
+    chown -R app:users /home /dev/stdout /dev/stderr
 
 USER app
 # https://developer.chrome.com/blog/browser-flags
