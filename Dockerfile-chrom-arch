@@ -1,6 +1,6 @@
 FROM archlinux
 
-RUN pacman -Syyu --noconfirm pipewire chromium && \
+RUN pacman -Syyu --noconfirm ttf-dejavu noto-fonts-emoji ttf-joypixels pipewire chromium && \
     pacman -Scc --noconfirm && \
     rm -rf /var/cache/pacman/pkg/
 
